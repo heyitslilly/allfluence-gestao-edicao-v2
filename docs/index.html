@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão de Edição — AllFluence v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Backgrounds */
+    --bg-primary: #0D0B1A;
+    --bg-secondary: #151025;
+    --bg-card: #1A1530;
+    --bg-card-hover: #221D3A;
+    --bg-input: #1A1530;
+
+    /* Accent */
+    --accent-pink: #E91E8C;
+    --accent-magenta: #B620E0;
+    --accent-cyan: #00D4AA;
+
+    /* Text */
+    --text-primary: #FFFFFF;
+    --text-secondary: #8B8B9E;
+    --text-muted: #5A5A6E;
+
+    /* Borders */
+    --border-glow: rgba(233,30,140,0.25);
+    --border-subtle: rgba(255,255,255,0.08);
+    --border-active: rgba(233,30,140,0.5);
+
+    /* Status */
+    --success: #22C55E;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --info: #3B82F6;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #E91E8C, #B620E0);
+    --gradient-text: linear-gradient(90deg, #E91E8C, #B620E0);
+    --gradient-progress: linear-gradient(90deg, #E91E8C, #B620E0, #00D4AA);
+
+    /* Shadows */
+    --shadow-card: 0 4px 24px rgba(0,0,0,0.3);
+    --shadow-glow: 0 0 20px rgba(233,30,140,0.15);
+    --shadow-button: 0 4px 16px rgba(233,30,140,0.3);
+
+    /* Spacing */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+
+    /* Radius */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms ease;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .header-logo {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .header-logo .gradient-text {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header-badge {
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(233,30,140,0.12);
+    color: var(--accent-pink);
+    border: 1px solid rgba(233,30,140,0.2);
+  }
+  .header span { color: var(--text-muted); font-size: 13px; }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 24px;
+    overflow-x: auto;
+    gap: 4px;
+  }
+  .tab {
+    padding: 14px 20px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all var(--transition-base);
+    white-space: nowrap;
+    user-select: none;
+    position: relative;
+  }
+  .tab:hover {
+    color: var(--text-secondary);
+    background: rgba(233,30,140,0.04);
+  }
+  .tab.active {
+    color: var(--accent-pink);
+    border-bottom-color: var(--accent-pink);
+    font-weight: 600;
+  }
+
+  /* ===== CONTENT ===== */
+  .content { padding: 32px; max-width: 1240px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-card);
+    transition: all var(--transition-base);
+  }
+  .card:hover {
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-card), var(--shadow-glow);
+  }
+  .card h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .card h3 {
+    font-size: 14px;
+    margin: 14px 0 8px;
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* ===== GRIDS ===== */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  @media (max-width: 768px) {
+    .grid2, .grid3, .grid4 { grid-template-columns: 1fr; }
+  }
+
+  /* ===== STAT CARDS ===== */
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    text-align: center;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+  }
+  .stat-card:hover::before { opacity: 1; }
+  .stat-card:hover {
+    border-color: var(--border-glow);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+  }
+  .stat-card .value { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+  .stat-card .label { font-size: 12px; color: var(--text-secondary); margin-top: 6px; font-weight: 500; }
+
+  /* ===== TABLES ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  th {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  tr { transition: background var(--transition-fast); }
+  tr:hover td { background: var(--bg-card-hover); }
+
+  /* ===== BADGES ===== */
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-head {
+    background: linear-gradient(135deg, rgba(233,30,140,0.2), rgba(182,32,224,0.2));
+    color: var(--accent-pink);
+    border: 1px solid rgba(233,30,140,0.3);
+  }
+  .badge-revisor {
+    background: rgba(0,212,170,0.15);
+    color: var(--accent-cyan);
+    border: 1px solid rgba(0,212,170,0.3);
+  }
+  .badge-editor {
+    background: rgba(59,130,246,0.15);
+    color: var(--info);
+    border: 1px solid rgba(59,130,246,0.3);
+  }
+  .badge-freela {
+    background: rgba(245,158,11,0.15);
+    color: var(--warning);
+    border: 1px solid rgba(245,158,11,0.3);
+  }
+
+  /* ===== BARS ===== */
+  .bar-container {
+    background: rgba(255,255,255,0.04);
+    border-radius: var(--radius-sm);
+    height: 28px;
+    overflow: hidden;
+    position: relative;
+    margin: 8px 0;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: var(--radius-sm);
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+
+  /* ===== CAPACITY LAYERS ===== */
+  .capacity-layer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background var(--transition-fast);
+  }
+  .capacity-layer:last-child { border-bottom: none; }
+  .capacity-layer:hover { background: rgba(233,30,140,0.02); border-radius: var(--radius-md); }
+  .capacity-layer .icon {
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.04);
+    border-radius: var(--radius-md);
+  }
+  .capacity-layer .info { flex: 1; }
+  .capacity-layer .info .name { font-size: 14px; font-weight: 600; }
+  .capacity-layer .info .detail { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* ===== STATUS DOTS ===== */
+  .status-dot {
+    width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px;
+  }
+  .status-dot.green { background: var(--success); box-shadow: 0 0 6px rgba(34,197,94,0.4); }
+  .status-dot.yellow { background: var(--warning); box-shadow: 0 0 6px rgba(245,158,11,0.4); }
+  .status-dot.red { background: var(--error); box-shadow: 0 0 6px rgba(239,68,68,0.4); }
+
+  /* ===== BUTTONS ===== */
+  button, select, input {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+  }
+  .btn {
+    padding: 10px 20px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+  }
+  .btn:hover {
+    border-color: var(--accent-pink);
+    background: rgba(233,30,140,0.05);
+    box-shadow: 0 0 12px rgba(233,30,140,0.1);
+  }
+  .btn-primary {
+    background: var(--gradient-primary);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: var(--shadow-button);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 6px 24px rgba(233,30,140,0.4);
+  }
+  .btn-sm { padding: 6px 14px; font-size: 12px; }
+
+  input[type="number"], select {
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    padding: 10px 14px;
+    transition: all var(--transition-fast);
+  }
+  input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-pink);
+    box-shadow: 0 0 0 3px rgba(233,30,140,0.15);
+  }
+
+  /* ===== SIMULATOR ===== */
+  .sim-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .sim-row:last-child { border-bottom: none; }
+  .sim-row select { flex: 1; }
+  .sim-row input[type="number"] { width: 80px; }
+
+  /* ===== TEAM CARDS ===== */
+  .member-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    text-align: center;
+    transition: all var(--transition-base);
+  }
+  .member-card:hover {
+    border-color: var(--border-glow);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-glow);
+  }
+  .member-card .avatar {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(233,30,140,0.15), rgba(182,32,224,0.15));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent-pink);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+  }
+  .member-card .avatar::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    z-index: -1;
+  }
+  .member-card .name { font-size: 15px; font-weight: 600; }
+  .member-card .role { font-size: 12px; color: var(--text-secondary); margin: 6px 0 10px; }
+  .member-card .salary { font-size: 14px; font-weight: 600; color: var(--accent-cyan); }
+  .member-card .tenure { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+
+  /* ===== MATRIX ===== */
+  .matrix-cell {
+    width: 30px; height: 30px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    transition: transform var(--transition-fast);
+  }
+  .matrix-cell:hover { transform: scale(1.15); }
+  .matrix-yes { background: rgba(34,197,94,0.15); color: var(--success); }
+  .matrix-no { background: rgba(239,68,68,0.15); color: var(--error); }
+  .matrix-partial { background: rgba(245,158,11,0.15); color: var(--warning); }
+
+  /* ===== BONUS CARDS ===== */
+  .bonus-card {
+    background: rgba(255,255,255,0.03);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    border-left: 4px solid var(--accent-pink);
+    transition: all var(--transition-base);
+  }
+  .bonus-card:hover {
+    background: rgba(233,30,140,0.04);
+    transform: translateX(4px);
+  }
+  .bonus-card h4 { font-size: 14px; margin-bottom: 8px; color: var(--text-secondary); font-weight: 500; }
+  .bonus-card .amount {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    letter-spacing: -0.5px;
+  }
+  .bonus-card .desc { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
+
+  /* ===== ALERTS ===== */
+  .separator { border: none; border-top: 1px solid var(--border-subtle); margin: 16px 0; }
+  .tooltip-text { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5; }
+
+  .alert {
+    padding: 14px 20px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    margin-bottom: 12px;
+    border: 1px solid;
+    font-weight: 500;
+  }
+  .alert-green {
+    background: rgba(34,197,94,0.08);
+    border-color: rgba(34,197,94,0.3);
+    color: var(--success);
+  }
+  .alert-yellow {
+    background: rgba(245,158,11,0.08);
+    border-color: rgba(245,158,11,0.3);
+    color: var(--warning);
+  }
+  .alert-red {
+    background: rgba(239,68,68,0.08);
+    border-color: rgba(239,68,68,0.3);
+    color: var(--error);
+  }
+
+  .sim-result { margin-top: 16px; padding: 16px; border-radius: var(--radius-md); }
+  .sim-result h3 { margin-bottom: 8px; }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(233,30,140,0.3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(233,30,140,0.5); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo"><span class="gradient-text">AllFluence</span></div>
+  <span style="color:var(--text-muted);font-size:14px">—</span>
+  <span style="color:var(--text-primary);font-size:15px;font-weight:600">Gestão de Edição</span>
+  <div style="flex:1"></div>
+  <span class="header-badge">v2.0 Design System</span>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="dashboard">Dashboard</div>
+  <div class="tab" data-tab="pesos">Pesos</div>
+  <div class="tab" data-tab="bonificacao">Bonificação</div>
+  <div class="tab" data-tab="remuneracao">Remuneração</div>
+  <div class="tab" data-tab="simulador">Simulador</div>
+  <div class="tab" data-tab="time">Time</div>
+  <div class="tab" data-tab="matriz">Matriz</div>
+</div>
+
+<div class="content">
+
+<!-- ==================== TAB 1: DASHBOARD ==================== -->
+<div class="panel active" id="panel-dashboard">
+  <div class="grid4">
+    <div class="stat-card">
+      <div class="value" style="color:var(--accent-pink)">7</div>
+      <div class="label">Time Fixo</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" style="color:var(--accent-cyan)">5</div>
+      <div class="label">Online/dia (média)</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" style="color:var(--warning)">5</div>
+      <div class="label">Freelas no Banco</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" style="color:var(--info)">15-20</div>
+      <div class="label">Vídeos/dia (cap. fixo)</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>Capacidade em Camadas</h2>
+    <p class="tooltip-text">O time fixo absorve a demanda padrão. Freelas ativados apenas em pico (30+ vídeos).</p>
+
+    <div class="capacity-layer">
+      <div class="icon">🏢</div>
+      <div class="info">
+        <div class="name">Camada 1 — Time Fixo (5 pessoas/dia)</div>
+        <div class="detail">2 heads + 3 revisores + 2 editores (com 2 folgas/dia)</div>
+      </div>
+      <div style="width:200px">
+        <div class="bar-container">
+          <div class="bar-fill" style="width:100%;background:var(--gradient-primary)">15-20 vídeos</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="capacity-layer">
+      <div class="icon">📞</div>
+      <div class="info">
+        <div class="name">Camada 2 — Freelas Ativos (5 disponíveis)</div>
+        <div class="detail">Raphael, Gustavo, Gabriel, Maria Eduarda, Bianca</div>
+      </div>
+      <div style="width:200px">
+        <div class="bar-container">
+          <div class="bar-fill" style="width:60%;background:var(--warning)">+10-15</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="capacity-layer">
+      <div class="icon">📋</div>
+      <div class="info">
+        <div class="name">Camada 3 — Banco de Editores (28 cadastrados)</div>
+        <div class="detail">Reserva para expansão ou substituição</div>
+      </div>
+      <div style="width:200px">
+        <div class="bar-container">
+          <div class="bar-fill" style="width:30%;background:var(--text-muted)">Reserva</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Status de Cobertura Hoje</h2>
+      <div id="coverage-status"></div>
+    </div>
+    <div class="card">
+      <h2>Regras Invioláveis</h2>
+      <div style="font-size:13px;line-height:2">
+        <div><span class="status-dot green"></span> 2 folgas/semana por pessoa — sem exceção</div>
+        <div><span class="status-dot green"></span> Sempre 1 revisor ou head online</div>
+        <div><span class="status-dot green"></span> Cobertura ideal: 1 head + 1 rev + 2 ed</div>
+        <div><span class="status-dot yellow"></span> Mínimo absoluto: 1 revisor + 1 editor</div>
+        <div><span class="status-dot red"></span> Pico (30+ vídeos): ativar protocolo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Cenários de Cobertura</h2>
+    <table>
+      <thead>
+        <tr><th>Cenário</th><th>Composição</th><th>Capacidade/dia</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ideal</td>
+          <td>1 head + 1 revisor + 2 editores</td>
+          <td>~15-20 vídeos</td>
+          <td><span class="status-dot green"></span> OK</td>
+        </tr>
+        <tr>
+          <td>Alternativo</td>
+          <td>2 revisores + 2 editores</td>
+          <td>~12-16 vídeos</td>
+          <td><span class="status-dot green"></span> OK</td>
+        </tr>
+        <tr>
+          <td>Mínimo</td>
+          <td>1 revisor + 1 editor</td>
+          <td>~6-8 vídeos</td>
+          <td><span class="status-dot yellow"></span> Atenção</td>
+        </tr>
+        <tr>
+          <td>Crítico</td>
+          <td>Sem revisor/head</td>
+          <td>0 (sem aprovação)</td>
+          <td><span class="status-dot red"></span> Proibido</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== TAB 2: PESOS ==================== -->
+<div class="panel" id="panel-pesos">
+  <div class="card">
+    <h2>Formatos de Vídeo — Peso, Tempo e Complexidade</h2>
+    <p class="tooltip-text">Os pesos refletem a complexidade relativa de cada formato. Usados para cálculo de produtividade e bonificação.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Formato</th>
+          <th>Peso</th>
+          <th>Tempo Médio</th>
+          <th>Complexidade</th>
+          <th>Média/dia (1 editor)</th>
+          <th>Detalhes</th>
+        </tr>
+      </thead>
+      <tbody id="formats-table"></tbody>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Distribuição por Peso</h2>
+      <div id="weight-bars"></div>
+    </div>
+    <div class="card">
+      <h2>Tempo Médio por Formato</h2>
+      <div id="time-bars"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 3: BONIFICAÇÃO ==================== -->
+<div class="panel" id="panel-bonificacao">
+  <div class="card">
+    <h2>Programa de Bonificação</h2>
+    <p class="tooltip-text">Incentivos para produtividade, qualidade e disponibilidade em períodos especiais.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Produtividade Mensal</h2>
+      <div class="bonus-card" style="margin-bottom:16px">
+        <h4>1º Lugar</h4>
+        <div class="amount">R$ 500</div>
+        <div class="desc">Maior volume de entregas do mês (ponderado por peso)</div>
+      </div>
+      <div class="bonus-card">
+        <h4>2º Lugar</h4>
+        <div class="amount">R$ 250</div>
+        <div class="desc">Segundo maior volume de entregas do mês</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Turbo (por vídeo extra)</h2>
+      <div class="bonus-card" style="margin-bottom:16px">
+        <h4>Vídeo Extra (acima da meta diária)</h4>
+        <div class="amount">R$ 25 <span style="font-size:14px;color:var(--text-muted)">/vídeo</span></div>
+        <div class="desc">Aplicável quando o editor supera a meta diária definida</div>
+      </div>
+      <div class="bonus-card" style="border-left-color:var(--warning)">
+        <h4>Sugestão: Turbo por Peso</h4>
+        <div class="amount" style="color:var(--warning)">R$ 15-45 <span style="font-size:14px;color:var(--text-muted)">/vídeo</span></div>
+        <div class="desc">Escalonar o turbo pelo peso do formato (leve R$15, médio R$25, pesado R$45)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Fim de Semana / Especial</h2>
+      <div class="bonus-card" style="margin-bottom:16px;border-left-color:var(--error)">
+        <h4>BBB</h4>
+        <div class="amount">R$ 35 <span style="font-size:14px;color:var(--text-muted)">/vídeo no FDS</span></div>
+        <div class="desc">Período BBB — alta demanda de conteúdo urgente</div>
+      </div>
+      <div class="bonus-card" style="border-left-color:var(--warning)">
+        <h4>TTCX / Eventos Especiais</h4>
+        <div class="amount">R$ 50 <span style="font-size:14px;color:var(--text-muted)">/vídeo no FDS</span></div>
+        <div class="desc">Eventos especiais com complexidade elevada</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Qualidade</h2>
+      <div class="bonus-card" style="margin-bottom:16px;border-left-color:var(--success)">
+        <h4>Bônus Qualidade</h4>
+        <div class="amount">R$ 200 <span style="font-size:14px;color:var(--text-muted)">/mês</span></div>
+        <div class="desc">Zero retrabalhos no mês + nota de qualidade alta</div>
+      </div>
+      <div class="bonus-card" style="border-left-color:var(--warning)">
+        <h4>Sugestão: Qualidade Escalonada</h4>
+        <div class="amount" style="color:var(--warning)">R$ 100 / 200 / 300</div>
+        <div class="desc">Bronze (1 retrabalho): R$100 | Prata (0 retrabalhos): R$200 | Ouro (0 + feedback positivo): R$300</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Resumo da Estrutura de Bonificação</h2>
+    <table>
+      <thead>
+        <tr><th>Tipo</th><th>Valor</th><th>Condição</th><th>Frequência</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Produtividade 1º</td><td style="color:var(--accent-cyan)">R$ 500</td><td>Maior volume (por peso)</td><td>Mensal</td></tr>
+        <tr><td>Produtividade 2º</td><td style="color:var(--accent-cyan)">R$ 250</td><td>2º maior volume</td><td>Mensal</td></tr>
+        <tr><td>Turbo</td><td style="color:var(--accent-cyan)">R$ 25/vídeo</td><td>Acima da meta diária</td><td>Por vídeo</td></tr>
+        <tr><td>FDS BBB</td><td style="color:var(--accent-cyan)">R$ 35/vídeo</td><td>Trabalho no FDS (BBB)</td><td>Por vídeo</td></tr>
+        <tr><td>FDS TTCX</td><td style="color:var(--accent-cyan)">R$ 50/vídeo</td><td>Trabalho no FDS (TTCX)</td><td>Por vídeo</td></tr>
+        <tr><td>Qualidade</td><td style="color:var(--accent-cyan)">R$ 200</td><td>0 retrabalhos + qualidade</td><td>Mensal</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== TAB 4: REMUNERAÇÃO ==================== -->
+<div class="panel" id="panel-remuneracao">
+  <div class="card">
+    <h2>Remuneração do Time Fixo</h2>
+    <p class="tooltip-text">Valores aproximados com reajuste + aumento FDS/BBB (~R$800). Contratos PJ em atualização (validação jurídica em andamento).</p>
+    <table>
+      <thead>
+        <tr><th>Membro</th><th>Cargo</th><th>Salário Base (aprox.)</th><th>Regime</th><th>Tempo de Casa</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Pedro Ximenes</td>
+          <td><span class="badge badge-head">Head</span></td>
+          <td style="color:var(--text-muted)">—</td>
+          <td>PJ</td>
+          <td>2+ anos</td>
+        </tr>
+        <tr>
+          <td>Lílian Elen</td>
+          <td><span class="badge badge-head">Head</span></td>
+          <td style="color:var(--text-muted)">—</td>
+          <td>PJ</td>
+          <td>2+ anos</td>
+        </tr>
+        <tr>
+          <td>Rafael Nóbrega</td>
+          <td><span class="badge badge-revisor">Revisor</span></td>
+          <td style="color:var(--accent-cyan)">~R$ 4.300</td>
+          <td>PJ</td>
+          <td>1+ ano</td>
+        </tr>
+        <tr>
+          <td>Ricardo Araújo</td>
+          <td><span class="badge badge-revisor">Revisor</span></td>
+          <td style="color:var(--accent-cyan)">~R$ 4.300</td>
+          <td>PJ</td>
+          <td>1+ ano</td>
+        </tr>
+        <tr>
+          <td>Daniel Lopes</td>
+          <td><span class="badge badge-revisor">Revisor</span></td>
+          <td style="color:var(--accent-cyan)">~R$ 4.300</td>
+          <td>PJ</td>
+          <td>6 meses</td>
+        </tr>
+        <tr>
+          <td>Bruna Ferreira</td>
+          <td><span class="badge badge-editor">Editor</span></td>
+          <td style="color:var(--accent-cyan)">~R$ 2.800</td>
+          <td>PJ</td>
+          <td>1+ ano</td>
+        </tr>
+        <tr>
+          <td>Vinícius Mendes</td>
+          <td><span class="badge badge-editor">Editor</span></td>
+          <td style="color:var(--accent-cyan)">~R$ 2.800</td>
+          <td>PJ</td>
+          <td>6 meses</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Custo Mensal Estimado (Time Fixo)</h2>
+      <div class="stat-card" style="border:none;box-shadow:none;background:transparent">
+        <div class="value" style="color:var(--accent-cyan)">~R$ 18.500</div>
+        <div class="label">3 revisores × R$4.300 + 2 editores × R$2.800</div>
+      </div>
+      <hr class="separator">
+      <div style="font-size:13px;color:var(--text-muted);text-align:center">
+        Heads: remuneração não listada (gestão)<br>
+        Valores incluem reajuste + adicional FDS/BBB (~R$800)
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Política de Reajuste</h2>
+      <div style="font-size:13px;line-height:2">
+        <div><span class="status-dot green"></span> Contratos PJ — flexíveis, repactuados conforme demanda</div>
+        <div><span class="status-dot green"></span> Reajuste já aplicado: adicional FDS/BBB (~R$800)</div>
+        <div><span class="status-dot yellow"></span> Validação jurídica em andamento</div>
+        <div><span class="status-dot yellow"></span> Jornada PJ: sem CLT, sem horário fixo</div>
+        <div><span class="status-dot green"></span> Revisão semestral de valores prevista</div>
+      </div>
+      <hr class="separator">
+      <div style="font-size:12px;color:var(--text-muted)">
+        Ref: <a href="https://app.clickup.com/t/86af1xqc2" target="_blank" style="color:var(--accent-pink);text-decoration:none">Task de contratos no ClickUp</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 5: SIMULADOR ==================== -->
+<div class="panel" id="panel-simulador">
+  <div class="card">
+    <h2>Simulador de Demanda</h2>
+    <p class="tooltip-text">Adicione formatos e quantidades para ver se o time fixo absorve ou precisa de freela.</p>
+
+    <div id="sim-items"></div>
+
+    <div style="margin-top:16px;display:flex;gap:10px">
+      <button class="btn" onclick="addSimItem()">+ Adicionar Formato</button>
+      <button class="btn btn-primary" onclick="runSimulation()">Calcular</button>
+      <button class="btn" onclick="resetSim()">Limpar</button>
+    </div>
+  </div>
+
+  <div id="sim-results"></div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>Referência Rápida</h2>
+    <div class="grid3">
+      <div>
+        <h3>Time Fixo (5 online/dia)</h3>
+        <div style="font-size:13px;color:var(--text-secondary)">
+          Editores: ~3-4 vídeos/dia cada<br>
+          Revisores: ~6-8 revisões/dia cada<br>
+          <strong style="color:var(--text-primary)">Total: ~15-20 vídeos/dia</strong>
+        </div>
+      </div>
+      <div>
+        <h3>Com Freelas (+5)</h3>
+        <div style="font-size:13px;color:var(--text-secondary)">
+          Freelas: ~2-3 vídeos/dia cada<br>
+          +10-15 vídeos adicionais<br>
+          <strong style="color:var(--text-primary)">Total: ~25-35 vídeos/dia</strong>
+        </div>
+      </div>
+      <div>
+        <h3>Alertas</h3>
+        <div style="font-size:13px">
+          <span class="status-dot green"></span> &lt; 20 vídeos: time fixo OK<br>
+          <span class="status-dot yellow"></span> 20-30 vídeos: avaliar freelas<br>
+          <span class="status-dot red"></span> 30+ vídeos: protocolo de pico
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 6: TIME ==================== -->
+<div class="panel" id="panel-time">
+  <div class="card">
+    <h2>Time Fixo de Edição</h2>
+    <p class="tooltip-text">7 membros — 2 heads, 3 revisores, 2 editores</p>
+  </div>
+  <div class="grid3" id="team-cards" style="margin-top:4px"></div>
+
+  <div class="card" style="margin-top:20px">
+    <h2>Freelas Ativos</h2>
+    <table>
+      <thead>
+        <tr><th>Nome</th><th>Status</th><th>Origem</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Raphael Pinheiro</td><td><span class="badge badge-freela">Ativo</span></td><td>Banco de Editores</td></tr>
+        <tr><td>Gustavo Rodrigues</td><td><span class="badge badge-freela">Ativo</span></td><td>Banco de Editores</td></tr>
+        <tr><td>Gabriel Bonilha</td><td><span class="badge badge-freela">Ativo</span></td><td>Banco de Editores</td></tr>
+        <tr><td>Maria Eduarda</td><td><span class="badge badge-freela">Ativo</span></td><td>Banco de Editores</td></tr>
+        <tr><td>Bianca Maurelli</td><td><span class="badge badge-freela">Ativo</span></td><td>Banco de Editores</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== TAB 7: MATRIZ ==================== -->
+<div class="panel" id="panel-matriz">
+  <div class="card">
+    <h2>Matriz Formato x Cargo</h2>
+    <p class="tooltip-text">Quem pode fazer o quê. Ajuda na distribuição de tarefas e planejamento de cobertura.</p>
+    <div style="overflow-x:auto">
+      <table id="matrix-table">
+        <thead>
+          <tr>
+            <th>Formato</th>
+            <th>Head</th>
+            <th>Revisor</th>
+            <th>Editor</th>
+            <th>Freela</th>
+          </tr>
+        </thead>
+        <tbody id="matrix-body"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:14px;font-size:12px;color:var(--text-muted);display:flex;gap:16px">
+      <span><span class="matrix-cell matrix-yes" style="display:inline-flex;width:20px;height:20px;font-size:11px">&#10003;</span> Pode executar</span>
+      <span><span class="matrix-cell matrix-partial" style="display:inline-flex;width:20px;height:20px;font-size:11px">~</span> Parcial / com supervisão</span>
+      <span><span class="matrix-cell matrix-no" style="display:inline-flex;width:20px;height:20px;font-size:11px">&#10005;</span> Não executa</span>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:20px">
+    <div class="card">
+      <h2>Cobertura por Cargo</h2>
+      <div id="coverage-by-role"></div>
+    </div>
+    <div class="card">
+      <h2>Gargalos Identificados</h2>
+      <div id="bottlenecks"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+// ==================== DATA ====================
+const TEAM = [
+  { id: 'PX', name: 'Pedro Ximenes', role: 'Head', salary: null, salaryDisplay: '—', tenure: '2+ anos', color: 'var(--accent-pink)' },
+  { id: 'LE', name: 'Lílian Elen', role: 'Head', salary: null, salaryDisplay: '—', tenure: '2+ anos', color: 'var(--accent-pink)' },
+  { id: 'RN', name: 'Rafael Nóbrega', role: 'Revisor', salary: 4300, salaryDisplay: '~R$ 4.300', tenure: '1+ ano', color: 'var(--accent-cyan)' },
+  { id: 'RA', name: 'Ricardo Araújo', role: 'Revisor', salary: 4300, salaryDisplay: '~R$ 4.300', tenure: '1+ ano', color: 'var(--accent-cyan)' },
+  { id: 'DL', name: 'Daniel Lopes', role: 'Revisor', salary: 4300, salaryDisplay: '~R$ 4.300', tenure: '6 meses', color: 'var(--accent-cyan)' },
+  { id: 'BF', name: 'Bruna Ferreira', role: 'Editor', salary: 2800, salaryDisplay: '~R$ 2.800', tenure: '1+ ano', color: 'var(--info)' },
+  { id: 'VM', name: 'Vinícius Mendes', role: 'Editor', salary: 2800, salaryDisplay: '~R$ 2.800', tenure: '6 meses', color: 'var(--info)' },
+];
+
+const FORMATS = [
+  { name: 'Reels/TikTok (simples)', weight: 1.0, time: '30-45 min', complexity: 'Baixa', perDay: '6-8', details: 'Corte direto, legenda, música' },
+  { name: 'Reels/TikTok (médio)', weight: 1.5, time: '45-90 min', complexity: 'Média', perDay: '4-5', details: 'Transições, efeitos, multicam leve' },
+  { name: 'Vídeo YouTube (curto)', weight: 2.0, time: '1.5-3h', complexity: 'Média', perDay: '2-3', details: 'Até 10 min, edição completa' },
+  { name: 'Vídeo YouTube (longo)', weight: 3.5, time: '4-8h', complexity: 'Alta', perDay: '1', details: '10-30 min, grafismos, B-roll extenso' },
+  { name: 'Podcast (cortes)', weight: 1.5, time: '45-90 min', complexity: 'Média', perDay: '4-5', details: 'Cortes de podcast com legendas' },
+  { name: 'Institucional/Comercial', weight: 3.0, time: '3-6h', complexity: 'Alta', perDay: '1-2', details: 'Motion graphics, color grading avançado' },
+  { name: 'Thumbnail/Static', weight: 0.5, time: '15-30 min', complexity: 'Baixa', perDay: '10-15', details: 'Design estático para thumbnails' },
+];
+
+const MATRIX = [
+  [2, 2, 2, 2],
+  [2, 2, 2, 1],
+  [2, 2, 2, 1],
+  [2, 2, 1, 0],
+  [2, 2, 2, 1],
+  [2, 2, 1, 0],
+  [2, 1, 2, 2],
+];
+
+// ==================== TABS ====================
+document.getElementById('tabs').addEventListener('click', function(e) {
+  if (!e.target.classList.contains('tab')) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById('panel-' + e.target.dataset.tab).classList.add('active');
+});
+
+// ==================== RENDER: FORMATS ====================
+function renderFormats() {
+  const tbody = document.getElementById('formats-table');
+  const weightBars = document.getElementById('weight-bars');
+  const timeBars = document.getElementById('time-bars');
+  const maxWeight = Math.max(...FORMATS.map(f => f.weight));
+
+  tbody.innerHTML = FORMATS.map(f => `
+    <tr>
+      <td><strong>${f.name}</strong></td>
+      <td><span style="font-size:18px;font-weight:800;background:var(--gradient-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${f.weight}</span></td>
+      <td>${f.time}</td>
+      <td>
+        <span class="badge" style="background:${f.complexity === 'Baixa' ? 'rgba(34,197,94,0.15);color:var(--success)' : f.complexity === 'Média' ? 'rgba(245,158,11,0.15);color:var(--warning)' : 'rgba(239,68,68,0.15);color:var(--error)'}">${f.complexity}</span>
+      </td>
+      <td>${f.perDay}</td>
+      <td style="color:var(--text-muted);font-size:12px">${f.details}</td>
+    </tr>
+  `).join('');
+
+  weightBars.innerHTML = FORMATS.map(f => `
+    <div class="bar-label"><span>${f.name}</span><span>${f.weight}x</span></div>
+    <div class="bar-container">
+      <div class="bar-fill" style="width:${(f.weight / maxWeight) * 100}%;background:var(--gradient-primary)">${f.weight}x</div>
+    </div>
+  `).join('');
+
+  const timeValues = FORMATS.map(f => parseFloat(f.time));
+  const maxTime = Math.max(...timeValues);
+  timeBars.innerHTML = FORMATS.map((f, i) => `
+    <div class="bar-label"><span>${f.name}</span><span>${f.time}</span></div>
+    <div class="bar-container">
+      <div class="bar-fill" style="width:${(timeValues[i] / maxTime) * 100}%;background:var(--info)">${f.time}</div>
+    </div>
+  `).join('');
+}
+
+// ==================== RENDER: TEAM ====================
+function renderTeam() {
+  const container = document.getElementById('team-cards');
+  container.innerHTML = TEAM.map(m => `
+    <div class="member-card">
+      <div class="avatar">${m.id}</div>
+      <div class="name">${m.name}</div>
+      <div class="role">
+        <span class="badge badge-${m.role.toLowerCase()}">${m.role}</span>
+      </div>
+      <div class="salary">${m.salaryDisplay}</div>
+      <div class="tenure">${m.tenure}</div>
+    </div>
+  `).join('');
+}
+
+// ==================== RENDER: MATRIX ====================
+function renderMatrix() {
+  const tbody = document.getElementById('matrix-body');
+  const symbols = { 2: ['&#10003;', 'matrix-yes'], 1: ['~', 'matrix-partial'], 0: ['&#10005;', 'matrix-no'] };
+
+  tbody.innerHTML = FORMATS.map((f, i) => `
+    <tr>
+      <td><strong>${f.name}</strong></td>
+      ${MATRIX[i].map(v => `<td><span class="matrix-cell ${symbols[v][1]}">${symbols[v][0]}</span></td>`).join('')}
+    </tr>
+  `).join('');
+
+  const roles = ['Head', 'Revisor', 'Editor', 'Freela'];
+  const roleColors = ['var(--accent-pink)', 'var(--accent-cyan)', 'var(--info)', 'var(--warning)'];
+  const coverageDiv = document.getElementById('coverage-by-role');
+  coverageDiv.innerHTML = roles.map((role, ri) => {
+    const full = MATRIX.filter(row => row[ri] === 2).length;
+    const partial = MATRIX.filter(row => row[ri] === 1).length;
+    const pct = Math.round(((full + partial * 0.5) / FORMATS.length) * 100);
+    return `
+      <div class="bar-label"><span>${role}</span><span>${full} completo, ${partial} parcial (${pct}%)</span></div>
+      <div class="bar-container">
+        <div class="bar-fill" style="width:${pct}%;background:${roleColors[ri]}">${pct}%</div>
+      </div>
+    `;
+  }).join('');
+
+  const bottlenecks = document.getElementById('bottlenecks');
+  const issues = [];
+  FORMATS.forEach((f, i) => {
+    if (MATRIX[i][3] === 0) issues.push({ format: f.name, issue: 'Freela NÃO pode executar — depende do time fixo' });
+    if (MATRIX[i][2] === 1) issues.push({ format: f.name, issue: 'Editor executa com supervisão — pode gerar gargalo no revisor' });
+  });
+  if (issues.length === 0) {
+    bottlenecks.innerHTML = '<div class="alert alert-green">Nenhum gargalo crítico identificado</div>';
+  } else {
+    bottlenecks.innerHTML = issues.map(iss => `
+      <div style="padding:10px 0;border-bottom:1px solid var(--border-subtle);font-size:13px">
+        <strong>${iss.format}</strong><br>
+        <span style="color:var(--warning)">${iss.issue}</span>
+      </div>
+    `).join('');
+  }
+}
+
+// ==================== RENDER: COVERAGE STATUS ====================
+function renderCoverageStatus() {
+  const div = document.getElementById('coverage-status');
+  const days = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+  div.innerHTML = `
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Simulação com distribuição equilibrada (2 folgas/pessoa). Valores reais definidos na Weekly.</p>
+    <table>
+      <thead><tr><th>Dia</th><th>Online (est.)</th><th>Rev/Heads</th><th>Status</th></tr></thead>
+      <tbody>
+        ${days.map((d, i) => {
+          const online = i < 5 ? 5 : 4;
+          const revHeads = i < 5 ? 4 : 3;
+          const status = revHeads >= 3 ? 'green' : revHeads >= 2 ? 'green' : 'yellow';
+          return `<tr>
+            <td>${d}</td>
+            <td>${online}</td>
+            <td>${revHeads}</td>
+            <td><span class="status-dot ${status}"></span>${status === 'green' ? 'OK' : 'Atenção'}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// ==================== SIMULATOR ====================
+let simItems = [];
+
+function addSimItem() {
+  const id = Date.now();
+  simItems.push({ id, format: 0, qty: 1 });
+  renderSimItems();
+}
+
+function removeSimItem(id) {
+  simItems = simItems.filter(i => i.id !== id);
+  renderSimItems();
+}
+
+function updateSimItem(id, field, value) {
+  const item = simItems.find(i => i.id === id);
+  if (item) item[field] = field === 'qty' ? parseInt(value) || 0 : parseInt(value);
+}
+
+function renderSimItems() {
+  const container = document.getElementById('sim-items');
+  if (simItems.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;padding:12px 0">Nenhum formato adicionado. Clique em "+ Adicionar Formato" para começar.</p>';
+    return;
+  }
+  container.innerHTML = simItems.map(item => `
+    <div class="sim-row">
+      <select onchange="updateSimItem(${item.id},'format',this.value)">
+        ${FORMATS.map((f, i) => `<option value="${i}" ${item.format === i ? 'selected' : ''}>${f.name} (peso ${f.weight})</option>`).join('')}
+      </select>
+      <input type="number" min="1" max="200" value="${item.qty}" onchange="updateSimItem(${item.id},'qty',this.value)" placeholder="Qtd">
+      <span style="color:var(--accent-pink);font-size:12px;min-width:60px;font-weight:600">= ${(FORMATS[item.format].weight * item.qty).toFixed(1)} pts</span>
+      <button class="btn btn-sm" onclick="removeSimItem(${item.id})" style="color:var(--error)">✕</button>
+    </div>
+  `).join('');
+}
+
+function runSimulation() {
+  if (simItems.length === 0) {
+    document.getElementById('sim-results').innerHTML = '<div class="card"><div class="alert alert-yellow">Adicione pelo menos um formato para simular.</div></div>';
+    return;
+  }
+
+  let totalVideos = 0;
+  let totalPoints = 0;
+  let breakdown = [];
+
+  simItems.forEach(item => {
+    const f = FORMATS[item.format];
+    totalVideos += item.qty;
+    totalPoints += f.weight * item.qty;
+    breakdown.push({ name: f.name, qty: item.qty, points: f.weight * item.qty, time: f.time });
+  });
+
+  const fixedCapacityPts = 20;
+  const freelaCapacityPts = 12;
+
+  const needsFreela = totalPoints > fixedCapacityPts;
+  const needsPeak = totalVideos >= 30 || totalPoints > (fixedCapacityPts + freelaCapacityPts);
+  const fixedPct = Math.min(100, Math.round((fixedCapacityPts / totalPoints) * 100));
+  const freelaNeeded = needsFreela ? Math.max(0, totalPoints - fixedCapacityPts) : 0;
+  const freelasCount = Math.ceil(freelaNeeded / 2.5);
+
+  const statusClass = needsPeak ? 'alert-red' : needsFreela ? 'alert-yellow' : 'alert-green';
+  const statusText = needsPeak ? 'PROTOCOLO DE PICO — Ativar freelas + traffic controller' : needsFreela ? 'FREELAS NECESSÁRIOS — Time fixo não absorve sozinho' : 'TIME FIXO ABSORVE — Sem necessidade de freela';
+
+  document.getElementById('sim-results').innerHTML = `
+    <div class="card" style="margin-top:20px">
+      <h2>Resultado da Simulação</h2>
+      <div class="alert ${statusClass}" style="font-size:15px;font-weight:600">${statusText}</div>
+
+      <div class="grid3" style="margin-top:16px">
+        <div class="stat-card">
+          <div class="value" style="color:var(--accent-pink)">${totalVideos}</div>
+          <div class="label">Vídeos Totais</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" style="color:var(--info)">${totalPoints.toFixed(1)}</div>
+          <div class="label">Pontos de Peso</div>
+        </div>
+        <div class="stat-card">
+          <div class="value" style="color:${needsFreela ? 'var(--warning)' : 'var(--accent-cyan)'}">${needsFreela ? freelasCount : 0}</div>
+          <div class="label">Freelas Necessários</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:20px">Absorção por Camada</h3>
+      <div class="bar-label"><span>Time Fixo (5 online)</span><span>${Math.min(totalPoints, fixedCapacityPts).toFixed(1)} / ${totalPoints.toFixed(1)} pts</span></div>
+      <div class="bar-container" style="height:36px">
+        <div class="bar-fill" style="width:${fixedPct}%;background:var(--gradient-primary)">${fixedPct}% fixo</div>
+      </div>
+      ${needsFreela ? `
+        <div class="bar-label"><span>Freelas (${freelasCount} pessoas)</span><span>${freelaNeeded.toFixed(1)} pts restantes</span></div>
+        <div class="bar-container" style="height:36px">
+          <div class="bar-fill" style="width:${Math.min(100, Math.round((freelaNeeded / freelaCapacityPts) * 100))}%;background:var(--warning)">${freelasCount} freelas</div>
+        </div>
+      ` : ''}
+
+      <h3 style="margin-top:20px">Detalhamento</h3>
+      <table>
+        <thead><tr><th>Formato</th><th>Qtd</th><th>Pontos</th><th>Tempo est.</th></tr></thead>
+        <tbody>
+          ${breakdown.map(b => `
+            <tr>
+              <td>${b.name}</td>
+              <td>${b.qty}</td>
+              <td style="color:var(--accent-pink);font-weight:600">${b.points.toFixed(1)}</td>
+              <td style="color:var(--text-secondary)">${b.time} × ${b.qty}</td>
+            </tr>
+          `).join('')}
+          <tr style="font-weight:700">
+            <td>TOTAL</td>
+            <td>${totalVideos}</td>
+            <td style="color:var(--accent-pink)">${totalPoints.toFixed(1)}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function resetSim() {
+  simItems = [];
+  renderSimItems();
+  document.getElementById('sim-results').innerHTML = '';
+}
+
+// ==================== INIT ====================
+renderFormats();
+renderTeam();
+renderMatrix();
+renderCoverageStatus();
+addSimItem();
+</script>
+</body>
+</html>
